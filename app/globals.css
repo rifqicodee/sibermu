@@ -1,0 +1,337 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-blue: var(--blue);
+  --color-blue-hover: var(--blue-hover);
+  --color-blue-light: var(--blue-light);
+  --color-blue-accent: var(--blue-accent);
+  --color-glass: var(--glass);
+  --color-glass-border: var(--glass-border);
+  --color-surface: var(--surface);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-card: 24px;
+
+  --shadow-blue: 0 20px 60px rgba(0, 91, 172, 0.08);
+  --shadow-blue-sm: 0 10px 30px rgba(0, 91, 172, 0.1);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-heading: var(--font-playfair), ui-serif, Georgia, serif;
+
+  --tracking-label: 0.25em;
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-dot: pulse-dot 2s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+  }
+}
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+
+  --primary: #005bac;
+  --primary-foreground: #ffffff;
+
+  --secondary: #eaf4ff;
+  --secondary-foreground: #005bac;
+
+  --muted: #f1f5f9;
+  --muted-foreground: #5b6a7d;
+
+  --accent: #eaf4ff;
+  --accent-foreground: #005bac;
+
+  --destructive: #ef4444;
+  --success: #22c55e;
+  --warning: #f59e0b;
+
+  --border: rgba(15, 23, 42, 0.08);
+  --input: rgba(15, 23, 42, 0.12);
+  --ring: #005bac;
+
+  --blue: #005bac;
+  --blue-hover: #0074d9;
+  --blue-light: #7db7ff;
+  --blue-accent: #eaf4ff;
+
+  --glass: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --surface: #ffffff;
+
+  --radius: 1rem;
+}
+
+.dark {
+  --background: #081420;
+  --foreground: #f8fafc;
+
+  --card: rgba(255, 255, 255, 0.04);
+  --card-foreground: #f8fafc;
+  --popover: #0c1b2b;
+  --popover-foreground: #f8fafc;
+
+  --primary: #0074d9;
+  --primary-foreground: #ffffff;
+
+  --secondary: rgba(125, 183, 255, 0.12);
+  --secondary-foreground: #eaf4ff;
+
+  --muted: rgba(255, 255, 255, 0.06);
+  --muted-foreground: #94a3b8;
+
+  --accent: rgba(125, 183, 255, 0.14);
+  --accent-foreground: #7db7ff;
+
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: #7db7ff;
+
+  --blue: #7db7ff;
+  --blue-hover: #a5cdff;
+  --blue-light: #0074d9;
+  --blue-accent: rgba(125, 183, 255, 0.14);
+
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --surface: #0c1b2b;
+
+  --shadow-blue: 0 20px 60px rgba(0, 0, 0, 0.35);
+  --shadow-blue-sm: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: rgba(0, 91, 172, 0.2);
+    color: var(--foreground);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.menu-in {
+  animation: menu-in 0.18s ease-out both;
+}
+
+@keyframes slide-fade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.slide-fade {
+  animation: slide-fade 0.3s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-in,
+  .slide-fade {
+    animation: none;
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.page-enter {
+  animation: page-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
+}
+
+/* Scroll reveal — di-arm lewat JS hanya jika elemen di luar viewport.
+   Default terlihat (aman tanpa JS / reduced motion). */
+.reveal-armed {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 32px));
+  transition:
+    opacity var(--reveal-duration, 0.9s) cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s),
+    transform var(--reveal-duration, 0.9s) cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
+  will-change: opacity, transform;
+}
+
+.reveal-armed.is-revealed {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+.reveal-stagger.reveal-armed > * {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 32px));
+  transition:
+    opacity var(--reveal-duration, 0.9s) cubic-bezier(0.22, 1, 0.36, 1),
+    transform var(--reveal-duration, 0.9s) cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-stagger.is-revealed > * {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-stagger.is-revealed > *:nth-child(1) { transition-delay: 0s; }
+.reveal-stagger.is-revealed > *:nth-child(2) { transition-delay: 0.1s; }
+.reveal-stagger.is-revealed > *:nth-child(3) { transition-delay: 0.2s; }
+.reveal-stagger.is-revealed > *:nth-child(4) { transition-delay: 0.3s; }
+.reveal-stagger.is-revealed > *:nth-child(5) { transition-delay: 0.4s; }
+.reveal-stagger.is-revealed > *:nth-child(6) { transition-delay: 0.5s; }
+.reveal-stagger.is-revealed > *:nth-child(7) { transition-delay: 0.6s; }
+.reveal-stagger.is-revealed > *:nth-child(8) { transition-delay: 0.7s; }
+.reveal-stagger.is-revealed > *:nth-child(9) { transition-delay: 0.78s; }
+.reveal-stagger.is-revealed > *:nth-child(10) { transition-delay: 0.86s; }
+.reveal-stagger.is-revealed > *:nth-child(11) { transition-delay: 0.94s; }
+.reveal-stagger.is-revealed > *:nth-child(12) { transition-delay: 1.02s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-armed,
+  .reveal-stagger.reveal-armed > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+@utility glass {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-blue);
+}
+
+@utility glass-strong {
+  background: color-mix(in srgb, var(--glass) 92%, transparent);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-blue);
+}
+
+@utility text-gradient-blue {
+  background: linear-gradient(120deg, #005bac 0%, #0074d9 55%, #7db7ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility glow-blue {
+  box-shadow: var(--shadow-blue);
+}
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility label-caps {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+@layer components {
+  .section {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

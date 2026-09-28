@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" fill="none">
+  <rect width="800" height="800" fill="#0A0A0A"/>
+  <g stroke="#A78B71" fill="none">
+    <path d="M100 700 A300 300 0 0 1 700 700" stroke-opacity="0.35" stroke-width="1.5"/>
+    <path d="M160 700 A240 240 0 0 1 640 700" stroke-opacity="0.28" stroke-width="1.25"/>
+    <path d="M220 700 A180 180 0 0 1 580 700" stroke-opacity="0.22" stroke-width="1"/>
+    <path d="M280 700 A120 120 0 0 1 520 700" stroke-opacity="0.18" stroke-width="1"/>
+    <path d="M340 700 A60 60 0 0 1 460 700" stroke-opacity="0.15" stroke-width="1"/>
+  </g>
+  <circle cx="400" cy="260" r="90" fill="url(#g4)" opacity="0.5"/>
+  <defs>
+    <radialGradient id="g4"><stop stop-color="#E8D5B7" stop-opacity="0.7"/><stop offset="1" stop-opacity="0"/></radialGradient>
+  </defs>
+</svg>
