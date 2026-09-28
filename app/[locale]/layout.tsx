@@ -1,13 +1,13 @@
 import type { Metadata, Viewport } from 'next'
 import { notFound } from 'next/navigation'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Inter, Playfair_Display, Quicksand } from 'next/font/google'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { CursorGlow } from '@/components/shared/cursor-glow'
 import { Footer } from '@/components/layout/footer'
 import { SearchDialogLazy } from '@/components/search/search-dialog-lazy'
-import { Navbar, type MenuItem } from '@/components/layout/navbar'
-import { NAV_FALLBACK } from '@/server/constants'
-import { getNavigation, getSiteSettings } from '@/server/queries'
+import { SiteHeader } from '@/components/layout/header/site-header'
+import type { HeaderContact, HeaderFaculty, HeaderStats } from '@/components/layout/header/types'
+import { getFaculties, getProdi, getSiteSettings } from '@/server/queries'
 import { getDictionary } from '@/lib/i18n/messages'
 import { defaultLocale, isLocale, locales } from '@/lib/i18n/config'
 import '../globals.css'
@@ -23,6 +23,14 @@ const playfair = Playfair_Display({
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
+})
+
+/** Font nav (Quicksand) — meniru tipografi sibermu.ac.id. */
+const quicksand = Quicksand({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-quicksand',
   display: 'swap',
 })
 
@@ -89,34 +97,78 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   if (!isLocale(locale)) notFound()
 
   const dict = getDictionary(locale)
-  let menu: MenuItem[] = NAV_FALLBACK
   let admissionOpen = true
   let admissionDeadline: string | null = null
+  let faculties: HeaderFaculty[] = []
+  const programsPerFaculty: Record<string, number> = {}
+  let contact: HeaderContact = {}
+  let stats: HeaderStats = {}
 
   try {
-    const [nav, settings] = await Promise.all([getNavigation(), getSiteSettings()])
-    if (nav.mainMenu?.length) menu = nav.mainMenu
+    const [settings, facultyDocs, prodiDocs] = await Promise.all([
+      getSiteSettings(),
+      getFaculties({ limit: 6 }),
+      getProdi({ limit: 200 }),
+    ])
+
     admissionOpen = settings.admissionOpen ?? true
     admissionDeadline = settings.admissionDeadline ?? null
+
+    contact = {
+      phone: settings.phone,
+      whatsapp: settings.whatsapp,
+      email: settings.email,
+      address: settings.address,
+      mapsUrl: settings.mapsUrl,
+    }
+
+    stats = {
+      employmentRate: settings.employmentRate,
+      partners: settings.partners,
+      students: settings.students,
+    }
+
+    faculties = facultyDocs.map((faculty) => ({
+      id: String(faculty.id),
+      code: faculty.code,
+      name: faculty.name,
+      accreditation: faculty.accreditation,
+      href: faculty.slug ? `/fakultas#${faculty.slug}` : '/fakultas',
+    }))
+
+    for (const prodi of prodiDocs) {
+      const raw = prodi.faculty as unknown
+      const facultyId =
+        typeof raw === 'string'
+          ? raw
+          : raw && typeof raw === 'object' && 'id' in raw
+            ? String((raw as { id: string | number }).id)
+            : null
+      if (!facultyId) continue
+      programsPerFaculty[facultyId] = (programsPerFaculty[facultyId] ?? 0) + 1
+    }
   } catch {
-    // DB belum siap (mis. build pertama tanpa payload.db) — pakai fallback
+    // DB belum siap (mis. build pertama tanpa payload.db) — pakai default
   }
 
   return (
     <html
       lang={locale}
       suppressHydrationWarning
-      className={`${playfair.variable} ${inter.variable} h-full antialiased`}
+      className={`${playfair.variable} ${inter.variable} ${quicksand.variable} h-full antialiased`}
       data-scroll-behavior="smooth"
     >
       <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
         <ThemeProvider>
-            <Navbar
-              menu={menu}
-              admissionOpen={admissionOpen}
-              admissionDeadline={admissionDeadline}
+            <SiteHeader
               locale={locale}
               dict={dict}
+              admissionOpen={admissionOpen}
+              admissionDeadline={admissionDeadline}
+              faculties={faculties}
+              programsPerFaculty={programsPerFaculty}
+              contact={contact}
+              stats={stats}
             />
             <CursorGlow />
             <main id="konten" className="flex-1">

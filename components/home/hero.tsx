@@ -46,7 +46,7 @@ export function Hero({ page: hero, settings, locale }: HeroProps) {
   const dict = getDictionary(locale)
   const en = locale === 'en'
   return (
-    <section className="relative flex min-h-[100svh] items-center overflow-hidden pt-28 pb-20">
+    <section className="relative flex min-h-[78svh] items-center overflow-hidden pt-10 pb-20">
       <NeuralCanvasLazy className="absolute inset-0 size-full" />
       <div
         aria-hidden="true"

@@ -30,6 +30,9 @@
   --color-blue-hover: var(--blue-hover);
   --color-blue-light: var(--blue-light);
   --color-blue-accent: var(--blue-accent);
+  --color-blue-secondary: var(--blue-secondary);
+  --color-blue-bright: var(--blue-bright);
+  --color-blue-tint: var(--blue-tint);
   --color-glass: var(--glass);
   --color-glass-border: var(--glass-border);
   --color-surface: var(--surface);
@@ -48,6 +51,7 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-playfair), ui-serif, Georgia, serif;
   --font-heading: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-nav: var(--font-quicksand, var(--font-inter)), ui-sans-serif, system-ui, sans-serif;
 
   --tracking-label: 0.25em;
 
@@ -97,6 +101,19 @@
   --blue-hover: #0074d9;
   --blue-light: #7db7ff;
   --blue-accent: #eaf4ff;
+  --blue-secondary: #1976d2;
+  --blue-bright: #2f80ed;
+  --blue-tint: #eef6ff;
+
+  /* Header — token spesifikasi redesign */
+  --header-h: 88px;
+  --header-h-scrolled: 72px;
+  --header-glass: rgba(255, 255, 255, 0.75);
+  --header-border: rgba(0, 91, 172, 0.08);
+  --header-shadow: 0 20px 50px rgba(0, 91, 172, 0.08);
+  --header-radius: 24px;
+  --header-topbar: #eef6ff;
+  --header-topbar-fg: #005bac;
 
   --glass: rgba(255, 255, 255, 0.65);
   --glass-border: rgba(255, 255, 255, 0.4);
@@ -134,6 +151,15 @@
   --blue-hover: #a5cdff;
   --blue-light: #0074d9;
   --blue-accent: rgba(125, 183, 255, 0.14);
+  --blue-secondary: #2f80ed;
+  --blue-bright: #2f80ed;
+  --blue-tint: rgba(0, 91, 172, 0.22);
+
+  --header-glass: rgba(8, 20, 32, 0.72);
+  --header-border: rgba(125, 183, 255, 0.14);
+  --header-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  --header-topbar: rgba(0, 91, 172, 0.22);
+  --header-topbar-fg: #cfe6ff;
 
   --glass: rgba(255, 255, 255, 0.06);
   --glass-border: rgba(255, 255, 255, 0.1);
@@ -154,6 +180,10 @@
   body {
     @apply bg-background text-foreground;
     text-rendering: optimizeLegibility;
+  }
+  /* anchor tidak tertutup header sticky */
+  [id] {
+    scroll-margin-top: 96px;
   }
   ::selection {
     background: rgba(0, 91, 172, 0.2);
@@ -179,6 +209,116 @@
 .menu-in {
   animation: menu-in 0.18s ease-out both;
 }
+
+/* ---------------------------------- header ---------------------------------- */
+
+@keyframes mega-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mega-blur {
+  from {
+    filter: blur(6px);
+  }
+  to {
+    filter: blur(0);
+  }
+}
+
+.mega-enter {
+  animation: mega-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mega-enter .mega-blur {
+  animation: mega-blur 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* track harus berisi konten duplikat agar -50% identik dengan 0 */
+.marquee-track {
+  animation: marquee 34s linear infinite;
+  will-change: transform;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Pill hover nav — meniru pola sibermu.ac.id tapi dengan biru identitas */
+.nav-pill {
+  position: relative;
+  isolation: isolate;
+}
+
+.nav-pill::before {
+  content: '';
+  position: absolute;
+  inset: 2px 6px;
+  z-index: -1;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #005bac 0%, #2f80ed 100%);
+  transform: scaleX(0.4);
+  opacity: 0;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.25s ease-out;
+}
+
+.nav-pill[data-active='true'] {
+  color: #005bac;
+}
+
+.nav-pill[data-active='true']::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: #2f80ed;
+  transform: translateX(-50%);
+}
+
+.nav-pill:hover::before,
+.nav-pill:focus-visible::before,
+.nav-pill[data-open='true']::before {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.nav-pill:hover,
+.nav-pill:focus-visible,
+.nav-pill[data-open='true'] {
+  color: #ffffff;
+}
+
+/* Spotlight kursor di dalam mega menu */
+.mega-spotlight {
+  background-image: radial-gradient(
+    320px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(47, 128, 237, 0.1),
+    transparent 70%
+  );
+  transition: opacity 0.3s ease-out;
+}
+
 
 @keyframes slide-fade {
   from {
@@ -289,6 +429,22 @@
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-blue);
+}
+
+/** Glass header sesuai spesifikasi redesign (transparan → putih glass saat scroll). */
+@utility header-glass {
+  background: var(--header-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--header-border);
+  box-shadow: var(--header-shadow);
+}
+
+/** Top bar pengumuman — padanan #D3DFF6 di situs asli, versi biru identitas. */
+@utility header-topbar {
+  background: var(--header-topbar);
+  color: var(--header-topbar-fg);
+  border-bottom: 1px solid var(--header-border);
 }
 
 @utility text-gradient-blue {

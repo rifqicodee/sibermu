@@ -1,12 +1,20 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { useRouter } from 'next/navigation'
 import Fuse from 'fuse.js'
-import { CornerDownLeft, FileText, Loader2, Search } from 'lucide-react'
+import { CornerDownLeft, FileText, History, Loader2, Search, X } from 'lucide-react'
 
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from 'cn'
+import {
+  addRecent,
+  clearRecent as clearRecentStore,
+  getRecentServerSnapshot,
+  getRecentSnapshot,
+  parseRecent,
+  subscribeRecent,
+} from '@/lib/search-recent'
 import type { Dictionary } from '@/lib/i18n/messages'
 import type { Locale } from '@/lib/i18n/config'
 import { localise } from '@/lib/i18n'
@@ -22,6 +30,8 @@ type SearchItem = {
 }
 
 const GROUP_ORDER: SearchType[] = ['fakultas', 'prodi', 'dosen', 'berita', 'event', 'faq', 'page']
+
+
 
 const GROUP_ICON: Record<SearchType, typeof FileText> = {
   fakultas: FileText,
@@ -62,6 +72,9 @@ export function SearchDialog({ locale, dict }: SearchDialogProps) {
     }
   }, [])
 
+  const recentRaw = useSyncExternalStore(subscribeRecent, getRecentSnapshot, getRecentServerSnapshot)
+  const recent = useMemo(() => parseRecent(recentRaw), [recentRaw])
+
   useEffect(() => {
     if (open && items === null) {
       fetch('/api/search')
@@ -84,24 +97,32 @@ export function SearchDialog({ locale, dict }: SearchDialogProps) {
     [items],
   )
 
+  const trimmed = query.trim()
+  const showSuggestions = trimmed.length < 2
+
   const results = useMemo(() => {
-    if (!items) return []
-    const trimmed = query.trim()
-    const base = trimmed.length >= 2 && fuse ? fuse.search(trimmed).map((r) => r.item) : items
-    const pages = base.filter((i) => i.type === 'page')
-    const rest = base.filter((i) => i.type !== 'page')
-    const ordered = trimmed.length >= 2 && fuse ? [...rest, ...pages] : pages
-    return [...ordered].sort((a, b) => GROUP_ORDER.indexOf(a.type) - GROUP_ORDER.indexOf(b.type)).slice(0, 16)
+    if (!items || !fuse) return []
+    const term = query.trim()
+    if (term.length < 2) return []
+    const found = fuse.search(term).map((r) => r.item)
+    const pages = found.filter((i) => i.type === 'page')
+    const rest = found.filter((i) => i.type !== 'page')
+    return [...rest, ...pages]
+      .sort((a, b) => GROUP_ORDER.indexOf(a.type) - GROUP_ORDER.indexOf(b.type))
+      .slice(0, 16)
   }, [fuse, items, query])
+
+  const clearRecent = useCallback(() => clearRecentStore(), [])
 
   const go = useCallback(
     (item: SearchItem) => {
+      addRecent(query)
       setOpen(false)
       setQuery('')
       setActive(0)
       router.push(localise(item.href, locale))
     },
-    [locale, router],
+    [locale, query, router],
   )
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -166,13 +187,68 @@ export function SearchDialog({ locale, dict }: SearchDialogProps) {
         </div>
 
         <div className="max-h-[55vh] overflow-y-auto p-2">
-          {groups.length === 0 && items !== null ? (
+          {showSuggestions ? (
+            <div className="p-2">
+              {recent.length ? (
+                <div className="mb-5">
+                  <div className="flex items-center justify-between gap-3 px-2 pb-2">
+                    <p className="label-caps flex items-center gap-1.5">
+                      <History className="size-3.5" aria-hidden="true" />
+                      {dict.search.recent}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={clearRecent}
+                      className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[0.7rem] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    >
+                      <X className="size-3" aria-hidden="true" />
+                      {dict.search.clear}
+                    </button>
+                  </div>
+                  <ul className="flex flex-wrap gap-2 px-2">
+                    {recent.map((term) => (
+                      <li key={term}>
+                        <button
+                          type="button"
+                          onClick={() => setQuery(term)}
+                          className="rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-blue/30 hover:bg-blue/8 hover:text-blue"
+                        >
+                          {term}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              <div className="px-2">
+                <p className="label-caps flex items-center gap-1.5 pb-2">
+                  <Search className="size-3.5" aria-hidden="true" />
+                  {dict.search.popular}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {dict.search.popularTerms.map((term) => (
+                    <button
+                      key={term}
+                      type="button"
+                      onClick={() => setQuery(term)}
+                      className="rounded-full border border-[var(--header-border)] bg-blue/6 px-3 py-1.5 text-xs font-semibold text-blue transition-all hover:-translate-y-0.5 hover:bg-blue/12"
+                    >
+                      {term}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {!showSuggestions && groups.length === 0 && items !== null ? (
             <p className="px-4 py-8 text-center text-sm text-muted-foreground">
               {dict.search.empty} “{query}”
             </p>
           ) : null}
 
-          {groups.map((group) => {
+          {!showSuggestions ? groups.map((group) => {
             const Icon = GROUP_ICON[group.type]
             return (
               <div key={group.type} className="mb-1.5 last:mb-0">
@@ -216,7 +292,7 @@ export function SearchDialog({ locale, dict }: SearchDialogProps) {
                 ))}
               </div>
             )
-          })}
+          }) : null}
         </div>
 
         <div className="flex items-center justify-between border-t border-border bg-muted/40 px-4 py-2 text-[0.7rem] text-muted-foreground">
