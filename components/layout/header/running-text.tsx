@@ -19,7 +19,7 @@ export function RunningText({ dict, className }: RunningTextProps) {
   return (
     <div
       className={cn(
-        'relative h-[45px] w-full overflow-hidden border-b border-[var(--header-border)] bg-background/60',
+        'relative z-40 h-[45px] w-full overflow-hidden border-b border-[var(--header-border)] bg-background/60',
         className,
       )}
     >
@@ -46,7 +46,7 @@ export function RunningText({ dict, className }: RunningTextProps) {
           title={dict.runningText.title}
           loading="lazy"
           onError={() => setFailed(true)}
-          className="size-full border-0"
+          className="size-full border-0 dark:invert dark:hue-rotate-180"
         />
       )}
       <span className="sr-only">{dict.runningText.title}</span>

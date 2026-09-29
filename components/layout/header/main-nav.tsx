@@ -64,7 +64,7 @@ export function MainNav({
       )}
     >
       <div
-        className="section relative flex items-center justify-between gap-4 transition-all duration-[400ms] ease-out"
+        className="section relative flex items-center justify-between gap-3 transition-all duration-[400ms] ease-out"
         style={{ height: scrolled ? 72 : 88 }}
       >
         {/* Logo */}
@@ -80,11 +80,14 @@ export function MainNav({
 
         {/* Nav + mega menu */}
         <div
-          className="hidden lg:block"
+          className="hidden min-w-0 lg:block"
           onMouseEnter={onEnterArea}
           onMouseLeave={onLeaveArea}
         >
-          <nav aria-label={dict.nav.menu} className="flex items-center gap-0.5">
+          <nav
+            aria-label={dict.nav.menu}
+            className="scrollbar-hide flex items-center gap-0.5 overflow-x-auto py-2"
+          >
             {items.map((item) => {
               const hasMega = item.mega.layout !== 'none'
               const open = openId === item.id
@@ -101,7 +104,7 @@ export function MainNav({
                   onMouseEnter={() => onHoverItem(item.id)}
                   onFocus={() => onHoverItem(item.id)}
                   onClick={onClose}
-                  className="nav-pill rounded-full px-4 py-2.5 font-nav text-[0.78rem] font-bold tracking-[0.06em] whitespace-nowrap uppercase transition-colors"
+                  className="nav-pill shrink-0 rounded-full px-2.5 py-2.5 font-nav text-[0.7rem] font-bold tracking-[0.05em] whitespace-nowrap uppercase transition-colors xl:px-3 xl:text-[0.78rem]"
                 >
                   <span className="relative flex items-center gap-1.5">
                     {locale === 'en' && item.labelEn ? item.labelEn : item.label}
@@ -109,7 +112,7 @@ export function MainNav({
                       <ChevronDown
                         aria-hidden="true"
                         className={cn(
-                          'size-3.5 transition-transform duration-300',
+                          'size-3 transition-transform duration-300 xl:size-3.5',
                           open && 'rotate-180',
                         )}
                       />
@@ -133,18 +136,18 @@ export function MainNav({
         </div>
 
         {/* Aksi */}
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 xl:gap-2">
           {admissionOpen ? (
             <Link
               href={localise('/pmb', locale)}
-              className="hidden h-10 items-center rounded-full bg-linear-to-br from-[#005bac] to-[#2f80ed] px-5 font-nav text-[0.78rem] font-bold tracking-[0.04em] text-white uppercase shadow-[0_10px_24px_rgba(0,91,172,0.25)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(0,91,172,0.35)] sm:inline-flex"
+              className="hidden h-10 items-center rounded-full bg-linear-to-br from-[#005bac] to-[#2f80ed] px-4 font-nav text-[0.72rem] font-bold tracking-[0.04em] text-white uppercase shadow-[0_10px_24px_rgba(0,91,172,0.25)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(0,91,172,0.35)] sm:inline-flex xl:text-[0.78rem]"
             >
               {dict.nav.applyNow}
             </Link>
           ) : null}
           <Link
             href={localise('/#kampus', locale)}
-            className="hidden h-10 items-center rounded-full border border-[color-mix(in_srgb,var(--blue)_22%,transparent)] px-5 font-nav text-[0.78rem] font-bold tracking-[0.04em] text-blue uppercase transition-all hover:-translate-y-0.5 hover:border-blue/45 hover:bg-blue/6 xl:inline-flex"
+            className="hidden h-10 items-center rounded-full border border-[color-mix(in_srgb,var(--blue)_22%,transparent)] px-4 font-nav text-[0.72rem] font-bold tracking-[0.04em] text-blue uppercase transition-all hover:-translate-y-0.5 hover:border-blue/45 hover:bg-blue/6 xl:inline-flex xl:text-[0.78rem]"
           >
             {dict.nav.visitCampus}
           </Link>

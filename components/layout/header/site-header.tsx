@@ -56,7 +56,7 @@ export function SiteHeader({
   const openItem = NAV_ITEMS.find((item) => item.id === mega.openId) ?? null
 
   return (
-    <header className="relative z-40">
+    <header className="contents">
       <AnnouncementBar
         deadline={admissionDeadline}
         locale={locale}

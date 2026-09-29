@@ -101,7 +101,7 @@ export function AnnouncementBar({ deadline, locale, dict, className }: Announcem
   return (
     <aside
       aria-label={dict.announcement.label}
-      className={cn('header-topbar relative', className)}
+      className={cn('header-topbar relative z-40', className)}
     >
       <div className="section flex h-[42px] items-center gap-3">
         {/* Kiri — megaphone + pengumuman berjalan */}

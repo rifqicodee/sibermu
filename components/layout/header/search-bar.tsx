@@ -18,7 +18,7 @@ const openSearch = () => window.dispatchEvent(new CustomEvent('sibermu:search:op
  */
 export function SearchBar({ dict, className }: SearchBarProps) {
   return (
-    <div className={cn('border-b border-[var(--header-border)] bg-background/40', className)}>
+    <div className={cn('relative z-40 border-b border-[var(--header-border)] bg-background/40', className)}>
       <div className="section py-3">
         <button
           type="button"
