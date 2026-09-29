@@ -1,7 +1,4 @@
 import Link from 'next/link'
-import { Mail, MapPin, Phone } from 'lucide-react'
-
-import { NewsletterForm } from '@/components/layout/newsletter-form'
 import { LogoMark } from '@/components/shared/logo'
 import { SocialIcon } from '@/components/shared/social-icon'
 import { Container } from '@/components/shared/container'
@@ -41,83 +38,171 @@ export async function Footer({ locale, dict }: FooterProps) {
     // fallback
   }
 
-  return (
-    <footer className="relative mt-auto border-t border-white/8 bg-muted/40 dark:bg-[#060e15]">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-blue/50 to-transparent"
-      />
-      <Container className="py-16 sm:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr]">
-          <div className="flex flex-col gap-6">
-            <Link href={localise('/', locale)} className="w-fit">
-              <LogoMark withWordmark />
-            </Link>
-            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-              {locale === 'en' && footer.descriptionEn ? footer.descriptionEn : footer.description}
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              {settings?.socials?.map((social) => {
-                return (
-                  <a
-                    key={social.platform + social.url}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.platform}
-                    className="glass inline-flex size-10 items-center justify-center rounded-full text-muted-foreground transition-all hover:text-blue-hover hover:shadow-blue-sm"
-                  >
-                    <SocialIcon platform={social.platform} className="size-4" />
-                  </a>
-                )
-              })}
-            </div>
+  const isEn = locale === 'en'
 
-            <div className="mt-2 flex flex-col gap-2">
-              <h3 className="label-caps">{dict.footer.newsletterTitle}</h3>
-              <NewsletterForm dict={dict} />
+  return (
+    <footer className="relative mt-auto border-t border-primary/10 bg-gradient-to-br from-[#005bac] via-[#004f98] to-[#002f5a] text-primary-foreground pt-16 pb-10 transition-colors duration-300">
+      <Container className="max-w-7xl">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
+          
+          {/* Left Column: Brand, Description, and Socials (lg:col-span-5) */}
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            <Link href={localise('/', locale)} className="group flex items-center gap-4">
+              {/* Circular White Badge for Logo Icon */}
+              <div className="grid size-12 shrink-0 place-items-center rounded-full bg-white p-2 shadow-sm transition-transform duration-300 group-hover:scale-105">
+                <svg viewBox="0 0 120 120" fill="none" className="size-8">
+                  <path d="M 22 92 A 46 46 0 0 0 98 92 A 48 48 0 0 1 22 92 Z" fill="#0D2B5C" />
+                  <path d="M 18 56 C 18 34 35 16 60 16 C 85 16 102 34 102 56 C 102 76 86 92 60 94 C 34 92 18 76 18 56 Z" stroke="#007B3A" strokeWidth="3" fill="none" />
+                  <circle cx="60" cy="54" r="32" fill="#007B3A" />
+                  <circle cx="60" cy="54" r="16" fill="#007B3A" stroke="#FFFFFF" strokeWidth="1.5" />
+                  <text x="60" y="58" textAnchor="middle" fill="#FFFFFF" fontSize="11" fontWeight="bold" fontFamily="serif">مُحَمَّدِيَّة</text>
+                </svg>
+              </div>
+              <div className="flex flex-col font-sans leading-none tracking-tight">
+                <span className="text-xl font-bold tracking-tight text-white">SiberMu</span>
+                <span className="mt-0.5 text-[0.65rem] font-medium tracking-wide text-primary-foreground/90 uppercase">Universitas Siber Muhammadiyah</span>
+              </div>
+            </Link>
+
+            <p className="font-sans text-[15px] font-medium leading-relaxed text-primary-foreground/90 max-w-sm mt-2">
+              {isEn
+                ? 'A progressive digital university pioneering flexible higher education in Indonesia. Connecting learners with a global future.'
+                : 'Pelopor Perguruan Tinggi Digital Berkemajuan di Indonesia yang Menghubungkan Pembelajar dengan Masa Depan Global.'}
+            </p>
+
+            <div className="flex items-center gap-3 mt-4">
+              {settings?.socials?.map((social) => (
+                <a
+                  key={social.platform + social.url}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.platform}
+                  className="grid size-10 place-items-center rounded-full bg-white text-[#005bac] shadow-sm transition-transform hover:scale-110"
+                >
+                  <SocialIcon platform={social.platform} className="size-5" />
+                </a>
+              ))}
+              {/* Fallback dummy socials if none provided */}
+              {!settings?.socials?.length && (
+                <>
+                  {['instagram', 'youtube', 'tiktok', 'facebook'].map((platform) => (
+                    <a
+                      key={platform}
+                      href="#"
+                      className="grid size-10 place-items-center rounded-full bg-white text-[#005bac] shadow-sm transition-transform hover:scale-110"
+                    >
+                      <SocialIcon platform={platform} className="size-5" />
+                    </a>
+                  ))}
+                </>
+              )}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
-            {footer.columns?.map((column) => (
-              <div key={column.title}>
-                <h3 className="label-caps mb-4">{pick(column.title, column.titleEn)}</h3>
-                <ul className="flex flex-col gap-2.5">
-                  {column.links?.map((link) => (
-                    <li key={link.href + link.label}>
-                      <Link
-                        href={localise(link.href, locale)}
-                        className="text-sm text-muted-foreground transition-colors hover:text-blue-hover"
-                      >
-                        {pick(link.label, link.labelEn)}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          {/* Right Columns: 3 Link Columns (lg:col-span-7) */}
+          <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8 pt-2 lg:pt-0">
+            {/* Nav Column 1 */}
+            <div className="flex flex-col gap-5">
+              <span className="text-[15px] font-bold text-white">
+                {isEn ? 'Academics' : 'Akademik'}
+              </span>
+              <ul className="flex flex-col gap-3.5 text-sm font-medium text-primary-foreground/80">
+                <li>
+                  <Link href={localise('/program', locale)} className="hover:text-white transition-colors">
+                    {isEn ? 'Study Programs' : 'Program Studi'}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={localise('/kurikulum', locale)} className="hover:text-white transition-colors">
+                    {isEn ? 'Curriculum' : 'Kurikulum'}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={localise('/kalender', locale)} className="hover:text-white transition-colors">
+                    {isEn ? 'Academic Calendar' : 'Kalender Akademik'}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={localise('/panduan', locale)} className="hover:text-white transition-colors">
+                    {isEn ? 'Student Guide' : 'Panduan Mahasiswa'}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Nav Column 2 */}
+            <div className="flex flex-col gap-5">
+              <span className="text-[15px] font-bold text-white">
+                {isEn ? 'Company' : 'Tentang Kami'}
+              </span>
+              <ul className="flex flex-col gap-3.5 text-sm font-medium text-primary-foreground/80">
+                <li>
+                  <Link href={localise('/profil', locale)} className="hover:text-white transition-colors">
+                    {isEn ? 'About Us' : 'Profil SiberMu'}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={localise('/visi-misi', locale)} className="hover:text-white transition-colors">
+                    {isEn ? 'Vision & Mission' : 'Visi & Misi'}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={localise('/karir', locale)} className="hover:text-white transition-colors">
+                    {isEn ? 'Careers' : 'Karir'}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={localise('/mitra', locale)} className="hover:text-white transition-colors">
+                    {isEn ? 'Partners' : 'Kemitraan'}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Nav Column 3 */}
+            <div className="flex flex-col gap-5">
+              <span className="text-[15px] font-bold text-white">
+                {isEn ? 'Resources' : 'Bantuan'}
+              </span>
+              <ul className="flex flex-col gap-3.5 text-sm font-medium text-primary-foreground/80">
+                <li>
+                  <Link href={localise('/pmb', locale)} className="hover:text-white transition-colors">
+                    {isEn ? 'Admissions' : 'Portal PMB'}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={localise('/#kontak', locale)} className="hover:text-white transition-colors">
+                    {isEn ? 'Contact Us' : 'Hubungi Kami'}
+                  </Link>
+                </li>
+                <li>
+                  <Link href={localise('/faq', locale)} className="hover:text-white transition-colors">
+                    FAQ
+                  </Link>
+                </li>
+                <li>
+                  <Link href={localise('/blog', locale)} className="hover:text-white transition-colors">
+                    Blog & Berita
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-4 border-t border-white/8 pt-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>{footer.copyright}</p>
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            {settings?.email ? (
-              <a href={`mailto:${settings?.email}`} className="inline-flex items-center gap-1.5 hover:text-blue-hover">
-                <Mail className="size-3.5" /> {settings?.email}
-              </a>
-            ) : null}
-            {settings?.phone ? (
-              <a href={`tel:${settings?.phone}`} className="inline-flex items-center gap-1.5 hover:text-blue-hover">
-                <Phone className="size-3.5" /> {settings?.phone}
-              </a>
-            ) : null}
-            {settings?.address ? (
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin className="size-3.5" /> {settings?.address.split('\n')[0]}
-              </span>
-            ) : null}
+        {/* Bottom Copyright Section */}
+        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-primary-foreground/20 pt-8 sm:flex-row">
+          <p className="text-[13px] font-medium text-primary-foreground/70">
+            © 2026 • Universitas Siber Muhammadiyah. All rights reserved.
+          </p>
+          <div className="flex items-center gap-6 text-[13px] font-medium text-primary-foreground/70">
+            <Link href={localise('/privacy', locale)} className="transition-colors hover:text-white">
+              Privacy Policy
+            </Link>
+            <Link href={localise('/terms', locale)} className="transition-colors hover:text-white">
+              Terms of Service
+            </Link>
           </div>
         </div>
       </Container>

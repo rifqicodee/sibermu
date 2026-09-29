@@ -6,6 +6,9 @@ import { FacultiesSection } from '@/components/home/faculties-section'
 import { FaqSection } from '@/components/home/faq-section'
 import { FeaturedPrograms } from '@/components/home/featured-programs'
 import { Hero } from '@/components/home/hero'
+import { SponsorsSection } from '@/components/home/sponsors-section'
+import { WelcomeSpeechSection } from '@/components/home/welcome-speech-section'
+import { WhySibermuSection } from '@/components/home/why-sibermu-section'
 import { NewsSection } from '@/components/home/news-section'
 import { QuickAccess } from '@/components/home/quick-access'
 import { StatsSection } from '@/components/home/stats-section'
@@ -80,20 +83,9 @@ export default async function HomePage({ params }: PageProps) {
   return (
     <>
       <Hero page={page} settings={settings} locale={locale} />
-      <QuickAccess page={page} locale={locale} />
-      <StatsSection page={page} settings={settings} locale={locale} />
-      <FacultiesSection page={page} faculties={facultiesRes ?? []} locale={locale} />
-      <FeaturedPrograms page={page} programs={prodiRes ?? []} locale={locale} />
-      <NewsSection page={page} news={newsRes?.docs ?? []} locale={locale} />
-      <EventsSection page={page} events={eventsRes ?? []} locale={locale} />
-      <Testimonials
-        page={page}
-        testimonials={testimonialsRes ?? []}
-        locale={locale}
-        dict={dict}
-      />
-      <VirtualCampus page={page} locale={locale} />
-      <FaqSection page={page} faqs={faqsRes ?? []} locale={locale} />
+      <SponsorsSection locale={locale} />
+      <WelcomeSpeechSection locale={locale} />
+      <WhySibermuSection locale={locale} />
       <CtaSection page={page} settings={settings} locale={locale} />
     </>
   )
